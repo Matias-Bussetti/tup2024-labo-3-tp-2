@@ -1,0 +1,12 @@
+ar\edu\utn\frbb\tup\Models\Banco\Banco.class
+ar\edu\utn\frbb\tup\Models\Movement\Movement.class
+ar\edu\utn\frbb\tup\App.class
+ar\edu\utn\frbb\tup\Controller\ClientController.class
+ar\edu\utn\frbb\tup\Utils\Input.class
+ar\edu\utn\frbb\tup\Models\Account\AccountInput.class
+ar\edu\utn\frbb\tup\Models\Client\ClientInput.class
+ar\edu\utn\frbb\tup\Utils\Console.class
+ar\edu\utn\frbb\tup\Models\Account\Account.class
+ar\edu\utn\frbb\tup\Controller\AccountController.class
+ar\edu\utn\frbb\tup\Models\Client\Client.class
+ar\edu\utn\frbb\tup\Models\Movement\MovementInput.class
