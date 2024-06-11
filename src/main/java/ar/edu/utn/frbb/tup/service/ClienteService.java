@@ -23,8 +23,7 @@ public class ClienteService {
             throw new ClienteAlreadyExistsException("Ya existe un cliente con DNI " + cliente.getDni());
         }
 
-
-        if(cliente.getFechaNacimiento() == null) {
+        if (cliente.getFechaNacimiento() == null) {
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser nula");
         }
 
@@ -47,7 +46,7 @@ public class ClienteService {
 
     public Cliente buscarClientePorDni(long dni) {
         Cliente cliente = clienteDao.find(dni, true);
-        if(cliente == null) {
+        if (cliente == null) {
             throw new IllegalArgumentException("El cliente no existe");
         }
         return cliente;
