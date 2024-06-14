@@ -99,7 +99,7 @@ public class CuentaServiceTest {
     }
 
     // Anotación para hacer una prueba
-    // @Test
+    @Test
     public void probarDarAltaCuentaConTipoCuentaQueYaExisteEnLasCuentasDelClienteFalle() {
         // Creo una cuenta, uso lo que ya hice en el anterior test
         Cuenta cuenta1 = new Cuenta();
@@ -112,9 +112,10 @@ public class CuentaServiceTest {
         // Setteo el mismo tipo en las dos para que tire error
         cuenta1.setTipoCuenta(TipoCuenta.CA$);
         cuenta1.setMoneda(TipoMoneda.PESOS);
-        cuenta2.setTipoCuenta(TipoCuenta.CA$);
+
         cuenta2.setMoneda(TipoMoneda.PESOS);
-        // cuenta2.setTipoCuenta(TipoCuenta.CAU$S);//! Aaca deberia tirar error
+        cuenta2.setTipoCuenta(TipoCuenta.CA$);
+        // cuenta2.setTipoCuenta(TipoCuenta.CAU$S);// ! Aaca deberia tirar error
 
         Cliente cliente = new Cliente(); // Creamos un cliente para simular
         cliente.setDni(dni);
@@ -124,12 +125,12 @@ public class CuentaServiceTest {
 
         // Aca lo que hago es retornar el cliente de arriba para
         // simular la busqueda
-        when(clienteDao.find(dni, true)).thenReturn(cliente);
+        when(clienteService.buscarClientePorDni(dni)).thenReturn(cliente);
 
         // Entonces hacemos la prueba de que cuando
         // se pasa una cuenta con un tipo no soporto
         // entoces tira error de tipocuentanosupported
-        assertThrows(TipoCuentaAlreadyExistsException.class, () -> cuentaService.darDeAltaCuenta(cuenta2, dni));
+        assertThrows(ClienteYaTieneTipoCuentaException.class, () -> cuentaService.darDeAltaCuenta(cuenta2, dni));
     }
 
     // Anotación para hacer una prueba
@@ -149,7 +150,7 @@ public class CuentaServiceTest {
         // Aca lo que hago es retornar el cliente de arriba para
         // simular la busqueda
         Cliente cliente = new Cliente();
-        // when(clienteService.buscarClientePorDni(dni)).thenReturn(cliente);
+        when(clienteService.buscarClientePorDni(dni)).thenReturn(cliente);
 
         // doNothing().when(clienteService).agregarCuenta(cuenta, dni);
 

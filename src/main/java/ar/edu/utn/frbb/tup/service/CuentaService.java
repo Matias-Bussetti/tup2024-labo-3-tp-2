@@ -41,6 +41,14 @@ public class CuentaService {
             throw new TipoCuentaNotSupportedException("El tipo cuenta no es soportado");
         }
 
+        if (clienteService.buscarClientePorDni(dniTitular).getCuentas().size() > 0) {
+            for (Cuenta cuentaCliente : clienteService.buscarClientePorDni(dniTitular).getCuentas()) {
+                if (cuentaCliente.getTipoCuenta().equals(cuenta.getTipoCuenta())) {
+                    throw new ClienteYaTieneTipoCuentaException("Cliente ya tiene este tipo de cuenta");
+                }
+            }
+        }
+
         clienteService.agregarCuenta(cuenta, dniTitular);
         cuentaDao.save(cuenta);
 
