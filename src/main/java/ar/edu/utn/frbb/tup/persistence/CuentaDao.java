@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class CuentaDao  extends AbstractBaseDao{
+public class CuentaDao extends AbstractBaseDao {
     @Override
     protected String getEntityName() {
         return "CUENTA";
@@ -21,6 +21,7 @@ public class CuentaDao  extends AbstractBaseDao{
     }
 
     public Cuenta find(long id) {
+
         if (getInMemoryDatabase().get(id) == null) {
             return null;
         }
@@ -29,8 +30,7 @@ public class CuentaDao  extends AbstractBaseDao{
 
     public List<Cuenta> getCuentasByCliente(long dni) {
         List<Cuenta> cuentasDelCliente = new ArrayList<>();
-        for (Object object:
-                getInMemoryDatabase().values()) {
+        for (Object object : getInMemoryDatabase().values()) {
             CuentaEntity cuenta = ((CuentaEntity) object);
             if (cuenta.getTitular().equals(dni)) {
                 cuentasDelCliente.add(cuenta.toCuenta());

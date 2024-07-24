@@ -21,6 +21,8 @@ public enum TipoPersona {
                 return tipo;
             }
         }
-        throw new IllegalArgumentException("No se pudo encontrar un TipoPersona con la descripción: " + text);
+        return PERSONA_FISICA;
+        // throw new IllegalArgumentException("No se pudo encontrar un TipoPersona con
+        // la descripción: " + text);
     }
 }

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.Scanner;
 
 @Component
-public class CuentaInputProcessor extends BaseInputProcessor{
+public class CuentaInputProcessor extends BaseInputProcessor {
     ClienteService clienteService;
     CuentaService cuentaService = new CuentaService();
     CuentaDao cuentaDao = new CuentaDao();
@@ -26,50 +26,54 @@ public class CuentaInputProcessor extends BaseInputProcessor{
         this.clienteService = clienteService;
     }
 
-    public void altaCuenta() {
-        Cuenta cuenta = new Cuenta();
-        clearScreen();
+    // public void altaCuenta() {
+    // Cuenta cuenta = new Cuenta();
+    // clearScreen();
 
-        System.out.println("Ingrese el tipo de cuenta ((C) Corriente, (A) Ahorro)");
-        String tipoCuentaStr = scanner.nextLine().toUpperCase();
-        while (!tipoCuentaStr.equals("C") && !tipoCuentaStr.equals("A")) {
-            System.out.println("Tipo de cuenta inválido. Ingrese C o A: ");
-            tipoCuentaStr = scanner.nextLine().toUpperCase();
-        }
+    // System.out.println("Ingrese el tipo de cuenta ((C) Corriente, (A) Ahorro)");
+    // String tipoCuentaStr = scanner.nextLine().toUpperCase();
+    // while (!tipoCuentaStr.equals("C") && !tipoCuentaStr.equals("A")) {
+    // System.out.println("Tipo de cuenta inválido. Ingrese C o A: ");
+    // tipoCuentaStr = scanner.nextLine().toUpperCase();
+    // }
 
-        // if (condicion) ? resultado1 : resultado2
-        TipoCuenta tipoCuenta = tipoCuentaStr.equals("C") ? TipoCuenta.CUENTA_CORRIENTE : TipoCuenta.CAJA_AHORRO;
-        cuenta.setTipoCuenta(tipoCuenta);
+    // // if (condicion) ? resultado1 : resultado2
+    // TipoCuenta tipoCuenta = tipoCuentaStr.equals("C") ?
+    // TipoCuenta.CUENTA_CORRIENTE : TipoCuenta.CAJA_AHORRO;
+    // cuenta.setTipoCuenta(tipoCuenta);
 
-        cuenta.setBalance(0);
+    // cuenta.setBalance(0);
 
-        System.out.println("Ingrese el dni del titular de la cuenta: ");
-        long dniTitular = Long.parseLong(scanner.nextLine());
+    // System.out.println("Ingrese el dni del titular de la cuenta: ");
+    // long dniTitular = Long.parseLong(scanner.nextLine());
 
-        System.out.println("Elija el tipo de moneda de la cuenta - (P) Pesos (D) Dólares: ");
-        String tipoMoneda = scanner.nextLine().toUpperCase();
-        while (!tipoMoneda.equals("P") && !tipoMoneda.equals("D")) {
-            System.out.println("Tipo de moneda inválido. Ingrese (P) Pesos o (D) Dolares: ");
-            tipoMoneda = scanner.nextLine().toUpperCase();
-        }
+    // System.out.println("Elija el tipo de moneda de la cuenta - (P) Pesos (D)
+    // Dólares: ");
+    // String tipoMoneda = scanner.nextLine().toUpperCase();
+    // while (!tipoMoneda.equals("P") && !tipoMoneda.equals("D")) {
+    // System.out.println("Tipo de moneda inválido. Ingrese (P) Pesos o (D) Dolares:
+    // ");
+    // tipoMoneda = scanner.nextLine().toUpperCase();
+    // }
 
-        TipoMoneda moneda = tipoMoneda.equals("P") ? TipoMoneda.PESOS : TipoMoneda.DOLARES;
-        cuenta.setMoneda(moneda);
+    // TipoMoneda moneda = tipoMoneda.equals("P") ? TipoMoneda.PESOS :
+    // TipoMoneda.DOLARES;
+    // cuenta.setMoneda(moneda);
 
-        cuenta.setFechaCreacion(LocalDate.now().atStartOfDay());
+    // cuenta.setFechaCreacion(LocalDate.now().atStartOfDay());
 
-        try {
-            cuentaService.darDeAltaCuenta(cuenta, dniTitular);
-            System.out.println("Cuenta creada con éxito");
-        } catch (TipoCuentaAlreadyExistsException e){
-            System.out.println("Error: " + e.getMessage());
-            return;
-        } catch (CuentaAlreadyExistsException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            System.out.println("Error al dar de alta la cuenta: " + e.getMessage());
-        } finally {
-            clearScreen();
-        }
-    }
+    // try {
+    // // cuentaService.darDeAltaCuenta(cuenta, dniTitular);
+    // System.out.println("Cuenta creada con éxito");
+    // } catch (TipoCuentaAlreadyExistsException e) {
+    // System.out.println("Error: " + e.getMessage());
+    // return;
+    // } catch (CuentaAlreadyExistsException e) {
+    // throw new RuntimeException(e);
+    // } catch (Exception e) {
+    // System.out.println("Error al dar de alta la cuenta: " + e.getMessage());
+    // } finally {
+    // clearScreen();
+    // }
+    // }
 }

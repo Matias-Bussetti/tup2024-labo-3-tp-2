@@ -3,13 +3,30 @@ package ar.edu.utn.frbb.tup.model;
 import java.time.LocalDateTime;
 import java.util.Random;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
+
 public class Cuenta {
     private long numeroCuenta;
     LocalDateTime fechaCreacion;
-    int balance;
+    double balance;
     TipoCuenta tipoCuenta;
+
+    @JsonBackReference // Estas anotaciones de Jackson pueden ayudarte a romper la referencia circular.
     Cliente titular;
+
     TipoMoneda moneda;
+
+    public Cuenta(CuentaDto cuentaDto) {
+        this.numeroCuenta = new Random().nextLong();
+        // this.balance = 0;
+        this.balance = 1000;
+        this.fechaCreacion = LocalDateTime.now();
+
+        this.tipoCuenta = cuentaDto.gTipoCuenta();
+        this.moneda = cuentaDto.gTipoMoneda();
+    }
 
     public Cuenta() {
         this.numeroCuenta = new Random().nextLong();
@@ -24,7 +41,6 @@ public class Cuenta {
     public void setTitular(Cliente titular) {
         this.titular = titular;
     }
-
 
     public TipoCuenta getTipoCuenta() {
         return tipoCuenta;
@@ -44,7 +60,6 @@ public class Cuenta {
         return this;
     }
 
-
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
     }
@@ -54,16 +69,16 @@ public class Cuenta {
         return this;
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public Cuenta setBalance(int balance) {
+    public Cuenta setBalance(double balance) {
         this.balance = balance;
         return this;
     }
 
-    public void debitarDeCuenta(int cantidadADebitar) throws NoAlcanzaException, CantidadNegativaException {
+    public void debitarDeCuenta(double cantidadADebitar) throws NoAlcanzaException, CantidadNegativaException {
         if (cantidadADebitar < 0) {
             throw new CantidadNegativaException();
         }
@@ -78,13 +93,12 @@ public class Cuenta {
         this.numeroCuenta = numeroCuenta;
     }
 
-    public void forzaDebitoDeCuenta(int i) {
+    public void forzaDebitoDeCuenta(double i) {
         this.balance = this.balance - i;
     }
 
     public long getNumeroCuenta() {
         return numeroCuenta;
     }
-
 
 }

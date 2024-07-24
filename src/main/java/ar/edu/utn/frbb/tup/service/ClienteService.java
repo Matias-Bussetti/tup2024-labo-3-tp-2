@@ -1,6 +1,6 @@
 package ar.edu.utn.frbb.tup.service;
 
-import ar.edu.utn.frbb.tup.controller.ClienteDto;
+import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
@@ -19,6 +19,9 @@ public class ClienteService {
 
     public Cliente darDeAltaCliente(ClienteDto clienteDto) throws ClienteAlreadyExistsException {
         Cliente cliente = new Cliente(clienteDto);
+
+        cliente.setTipoPersona(clienteDto.getTipoPersona());
+        cliente.setBanco(clienteDto.getBanco());
 
         if (clienteDao.find(cliente.getDni(), false) != null) {
             throw new ClienteAlreadyExistsException("Ya existe un cliente con DNI " + cliente.getDni());
@@ -44,7 +47,7 @@ public class ClienteService {
 
     public Cliente buscarClientePorDni(long dni) {
         Cliente cliente = clienteDao.find(dni, true);
-        if(cliente == null) {
+        if (cliente == null) {
             throw new IllegalArgumentException("El cliente no existe");
         }
         return cliente;

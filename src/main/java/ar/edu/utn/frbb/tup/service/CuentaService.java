@@ -1,8 +1,12 @@
 package ar.edu.utn.frbb.tup.service;
 
+import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
 import ar.edu.utn.frbb.tup.model.Cuenta;
+import ar.edu.utn.frbb.tup.model.TipoCuenta;
+import ar.edu.utn.frbb.tup.model.exception.ClienteYaTieneTipoCuentaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNotSupportedException;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,21 +21,45 @@ public class CuentaService {
     @Autowired
     ClienteService clienteService;
 
-    //Generar casos de test para darDeAltaCuenta
-    //    1 - cuenta existente
-    //    2 - cuenta no soportada
-    //    3 - cliente ya tiene cuenta de ese tipo
-    //    4 - cuenta creada exitosamente
-    public void darDeAltaCuenta(Cuenta cuenta, long dniTitular) throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException {
-        if(cuentaDao.find(cuenta.getNumeroCuenta()) != null) {
+    // Generar casos de test para darDeAltaCuenta
+    // 1 - cuenta existente
+    // 2 - cuenta no soportada
+    // 3 - cliente ya tiene cuenta de ese tipo
+    // 4 - cuenta creada exitosamente
+    public Cuenta darDeAltaCuenta(CuentaDto cuentaDto, long dniTitular)
+            throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException, TipoCuentaNotSupportedException,
+            ClienteYaTieneTipoCuentaException {
+
+        Cuenta cuenta = new Cuenta(cuentaDto);
+        cuenta.setMoneda(cuentaDto.gTipoMoneda());
+
+        System.out.println(cuenta.getTipoCuenta() + " " + cuenta.getMoneda());
+
+        if (cuentaDao.find(cuenta.getNumeroCuenta()) != null) {
             throw new CuentaAlreadyExistsException("La cuenta " + cuenta.getNumeroCuenta() + " ya existe.");
         }
 
-        //Chequear cuentas soportadas por el banco CA$ CC$ CAU$S
+        // Chequear cuentas soportadas por el banco CA$ CC$ CAU$S
         // if (!tipoCuentaEstaSoportada(cuenta)) {...}
+        if (!(cuenta.getTipoCuenta().equals(TipoCuenta.CA$) ||
+                cuenta.getTipoCuenta().equals(TipoCuenta.CC$) ||
+                cuenta.getTipoCuenta().equals(TipoCuenta.CAU$S))) {
+            throw new TipoCuentaNotSupportedException("El tipo cuenta no es soportado");
+        }
+
+        if (clienteService.buscarClientePorDni(dniTitular).getCuentas().size() > 0) {
+            for (Cuenta cuentaCliente : clienteService.buscarClientePorDni(dniTitular).getCuentas()) {
+                if (cuentaCliente.getTipoCuenta().equals(cuenta.getTipoCuenta())) {
+                    throw new ClienteYaTieneTipoCuentaException("Cliente ya tiene este tipo de cuenta");
+                }
+            }
+        }
 
         clienteService.agregarCuenta(cuenta, dniTitular);
         cuentaDao.save(cuenta);
+
+        return cuenta;
+
     }
 
     public Cuenta find(long id) {
