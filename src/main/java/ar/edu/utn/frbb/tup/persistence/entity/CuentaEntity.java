@@ -2,13 +2,22 @@ package ar.edu.utn.frbb.tup.persistence.entity;
 
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
-import ar.edu.utn.frbb.tup.model.TipoCuenta;
-import ar.edu.utn.frbb.tup.model.TipoMoneda;
+import ar.edu.utn.frbb.tup.model.Movimiento;
+import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
+import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
+import ar.edu.utn.frbb.tup.persistence.CuentaDao;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 public class CuentaEntity extends BaseEntity {
+
     String nombre;
     LocalDateTime fechaCreacion;
     double balance;
@@ -16,14 +25,23 @@ public class CuentaEntity extends BaseEntity {
     String moneda;
     Long titular;
     long numeroCuenta;
+    private List<Long> movimientos;
 
     public CuentaEntity(Cuenta cuenta) {
         super(cuenta.getNumeroCuenta());
+        this.numeroCuenta = cuenta.getNumeroCuenta();
         this.balance = cuenta.getBalance();
         this.tipoCuenta = cuenta.getTipoCuenta().toString();
         this.moneda = cuenta.getMoneda().toString();
         this.titular = cuenta.getTitular().getDni();
         this.fechaCreacion = cuenta.getFechaCreacion();
+        this.movimientos = new ArrayList<>();
+
+        if (cuenta.getMovimientos() != null && !cuenta.getMovimientos().isEmpty()) {
+            for (Movimiento movimiento : cuenta.getMovimientos()) {
+                movimientos.add(movimiento.getId());
+            }
+        }
     }
 
     public Cuenta toCuenta() {
@@ -33,6 +51,12 @@ public class CuentaEntity extends BaseEntity {
         cuenta.setTipoCuenta(TipoCuenta.valueOf(this.tipoCuenta));
         cuenta.setMoneda(TipoMoneda.valueOf(this.moneda));
         cuenta.setFechaCreacion(this.fechaCreacion);
+
+        if (this.titular != null) {
+            ClienteDao clienteDao = new ClienteDao();
+            cuenta.setTitular(clienteDao.find(this.titular, false));
+        }
+
         return cuenta;
     }
 

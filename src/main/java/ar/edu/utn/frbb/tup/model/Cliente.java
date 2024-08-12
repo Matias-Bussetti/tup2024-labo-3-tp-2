@@ -11,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
+import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
+import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
+import ar.edu.utn.frbb.tup.model.tipos.TipoPersona;
 
 public class Cliente extends Persona {
 

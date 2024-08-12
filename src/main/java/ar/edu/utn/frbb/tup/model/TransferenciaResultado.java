@@ -1,5 +1,7 @@
 package ar.edu.utn.frbb.tup.model;
 
+import ar.edu.utn.frbb.tup.model.tipos.TipoEstadoDeTransferencia;
+
 public class TransferenciaResultado {
     private TipoEstadoDeTransferencia estado;
     private String mensaje;

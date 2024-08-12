@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ClienteDao extends AbstractBaseDao{
+public class ClienteDao extends AbstractBaseDao {
 
     @Autowired
     CuentaDao cuentaDao;
@@ -15,10 +15,9 @@ public class ClienteDao extends AbstractBaseDao{
     public Cliente find(long dni, boolean loadComplete) {
         if (getInMemoryDatabase().get(dni) == null)
             return null;
-        Cliente cliente =   ((ClienteEntity) getInMemoryDatabase().get(dni)).toCliente();
+        Cliente cliente = ((ClienteEntity) getInMemoryDatabase().get(dni)).toCliente();
         if (loadComplete) {
-            for (Cuenta cuenta :
-                    cuentaDao.getCuentasByCliente(dni)) {
+            for (Cuenta cuenta : cuentaDao.getCuentasByCliente(dni)) {
                 cliente.addCuenta(cuenta);
             }
         }

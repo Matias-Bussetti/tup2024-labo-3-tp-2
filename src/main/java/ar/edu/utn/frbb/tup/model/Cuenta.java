@@ -1,31 +1,39 @@
 package ar.edu.utn.frbb.tup.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
+import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
+import ar.edu.utn.frbb.tup.model.exception.NoAlcanzaException;
+import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
+import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
 
 public class Cuenta {
     private long numeroCuenta;
-    LocalDateTime fechaCreacion;
-    double balance;
-    TipoCuenta tipoCuenta;
+    private LocalDateTime fechaCreacion;
+    private double balance;
+    private TipoCuenta tipoCuenta;
 
     @JsonBackReference // Estas anotaciones de Jackson pueden ayudarte a romper la referencia circular.
-    Cliente titular;
+    private Cliente titular;
 
-    TipoMoneda moneda;
+    private TipoMoneda moneda;
+
+    private Set<Movimiento> movimientos = new HashSet<>();
 
     public Cuenta(CuentaDto cuentaDto) {
         this.numeroCuenta = new Random().nextLong();
         // this.balance = 0;
-        this.balance = 1000;
+        this.balance = 1000000;// TODO: Eliminar
         this.fechaCreacion = LocalDateTime.now();
 
-        this.tipoCuenta = cuentaDto.gTipoCuenta();
-        this.moneda = cuentaDto.gTipoMoneda();
+        this.tipoCuenta = cuentaDto.parseTipoCuenta();
+        this.moneda = cuentaDto.parseTipoMoneda();
     }
 
     public Cuenta() {
@@ -99,6 +107,19 @@ public class Cuenta {
 
     public long getNumeroCuenta() {
         return numeroCuenta;
+    }
+
+    public Set<Movimiento> getMovimientos() {
+        return movimientos;
+    }
+
+    public void addMovimiento(Movimiento movimiento) {
+        this.movimientos.add(movimiento);
+        movimiento.setCuenta(this);
+    }
+
+    public void setMovimientos(Set<Movimiento> movimientos) {
+        this.movimientos = movimientos;
     }
 
 }

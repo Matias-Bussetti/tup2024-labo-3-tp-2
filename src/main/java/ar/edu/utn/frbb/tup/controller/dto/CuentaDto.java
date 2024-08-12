@@ -1,7 +1,7 @@
 package ar.edu.utn.frbb.tup.controller.dto;
 
-import ar.edu.utn.frbb.tup.model.TipoCuenta;
-import ar.edu.utn.frbb.tup.model.TipoMoneda;
+import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
+import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
 
 public class CuentaDto {
     private String tipoCuenta;
@@ -19,11 +19,11 @@ public class CuentaDto {
         return moneda;
     }
 
-    public TipoCuenta gTipoCuenta() {
+    public TipoCuenta parseTipoCuenta() {
         return TipoCuenta.valueOf(tipoCuenta);
     }
 
-    public TipoMoneda gTipoMoneda() {
+    public TipoMoneda parseTipoMoneda() {
         return TipoMoneda.valueOf(moneda);
     }
 
