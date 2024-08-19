@@ -20,8 +20,11 @@ import ar.edu.utn.frbb.tup.service.ClienteService;
 
 @Component
 public class ServiceValidator {
-    CuentaDao cuentaDao = new CuentaDao();
-    ClienteDao clienteDao = new ClienteDao();
+    @Autowired
+    private CuentaDao cuentaDao;
+
+    @Autowired
+    private ClienteDao clienteDao;
 
     public void clienteExists(long dni) {
         if (clienteDao.find(dni, false) == null) {
@@ -30,7 +33,15 @@ public class ServiceValidator {
     }
 
     public void cuentaExists(long numeroCuenta) {
-        // cuentaService.find(transferenciaDto.getCuentaDestino()) != null
+        if (cuentaDao.find(numeroCuenta, false) == null) {
+            throw new IllegalArgumentException("La cuenta no existe");
+        }
+    }
+
+    public void cuentaTieneSaldoSuficiente(long numeroCuenta, double monto) {
+        if (cuentaDao.find(numeroCuenta).getBalance() < monto) {
+            throw new IllegalArgumentException("La cuenta de origen no tiene sufuciente Balance");
+        }
     }
 
     public void titularTieneCuentaConTipoCuentaYMoneda(long dniTitular, TipoCuenta tipoCuenta, TipoMoneda tipoMoneda)

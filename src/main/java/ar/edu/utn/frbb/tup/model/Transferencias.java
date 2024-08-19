@@ -46,10 +46,10 @@ public class Transferencias {
     }
 
     public Transferencias(Movimiento movimiento) {
-        this.fecha = movimiento.getFechaCreacion().toString();
-        this.tipo = "Transfencia";
-        this.descripcionBreve = "Movimiento a " + movimiento.getCuentaDestino();
-        this.monto = movimiento.getBalance();
+        this.fecha = movimiento.getFechaCreacion().toLocalDate().toString();
+        this.tipo = movimiento.getTipo().toString();
+        this.descripcionBreve = movimiento.getDescripcionBreve();
+        this.monto = movimiento.getMonto();
     }
 
 }

@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.service;
 import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
 import ar.edu.utn.frbb.tup.controller.dto.TransferenciaDto;
 import ar.edu.utn.frbb.tup.model.Cuenta;
+import ar.edu.utn.frbb.tup.model.CuentaTransferencias;
 import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.exception.ClienteYaTieneTipoCuentaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
@@ -10,14 +11,13 @@ import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNotSupportedException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
+import ar.edu.utn.frbb.tup.model.tipos.TipoMovimiento;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
 import ar.edu.utn.frbb.tup.service.validator.ServiceValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Component
 public class CuentaService {
@@ -36,6 +36,7 @@ public class CuentaService {
         Cuenta cuenta = new Cuenta(cuentaDto);
         cuenta.setMoneda(cuentaDto.parseTipoMoneda());
 
+        serviceValidator.clienteExists(dniTitular);
         serviceValidator.cuentaAlreadyExist(cuenta.getNumeroCuenta());
         serviceValidator.tipoCuentaSoportadasPorElBanco(cuenta.getTipoCuenta());
         serviceValidator.clienteYaTieneUnaCuentaDeEseTipo(dniTitular, cuenta.getTipoCuenta());
@@ -58,18 +59,12 @@ public class CuentaService {
     public boolean registrarMovimientoSaliente(Cuenta cuentaOrigen, TransferenciaDto transferenciaDto) {
         Movimiento movimiento = new Movimiento();
         movimiento.setCuenta(cuentaOrigen);
-        movimiento.setBalance(transferenciaDto.getMonto());
-        movimiento.setCuentaDestino(transferenciaDto.getCuentaDestino());
-
-        if (transferenciaDto.getMoneda().equals("dolares")) {
-            movimiento.setMoneda(TipoMoneda.DOLARES);
-        } else if (transferenciaDto.getMoneda().equals("pesos")) {
-            movimiento.setMoneda(TipoMoneda.PESOS);
-        }
+        movimiento.setMonto(transferenciaDto.getMonto());
+        movimiento.setDescripcionBreve("Transferencia Saliente a " + transferenciaDto.getCuentaDestino());
+        movimiento.setTipo(TipoMovimiento.TRANSFERENCIA);
 
         cuentaOrigen.addMovimiento(movimiento);
 
-        // Falla aca
         cuentaDao.save(cuentaOrigen);
 
         return true;
@@ -78,15 +73,9 @@ public class CuentaService {
     public boolean registrarMovimientoEntrante(Cuenta cuentaDestino, TransferenciaDto transferenciaDto) {
         Movimiento movimiento = new Movimiento();
         movimiento.setCuenta(cuentaDestino);
-        movimiento.setBalance(transferenciaDto.getMonto());
-        movimiento.setCuentaDestino(transferenciaDto.getCuentaDestino());
-        movimiento.setCuentaDestino(transferenciaDto.getCuentaOrigen());
-
-        if (transferenciaDto.getMoneda().equals("dolares")) {
-            movimiento.setMoneda(TipoMoneda.DOLARES);
-        } else if (transferenciaDto.getMoneda().equals("pesos")) {
-            movimiento.setMoneda(TipoMoneda.PESOS);
-        }
+        movimiento.setMonto(transferenciaDto.getMonto());
+        movimiento.setDescripcionBreve("Transferencia Entrante de " + transferenciaDto.getCuentaDestino());
+        movimiento.setTipo(TipoMovimiento.TRANSFERENCIA);
 
         cuentaDestino.addMovimiento(movimiento);
 
@@ -94,5 +83,20 @@ public class CuentaService {
         cuentaDao.save(cuentaDestino);
 
         return true;
+    }
+
+    public CuentaTransferencias obtenerTransaccionesDeCuenta(long numeroCuenta) {
+
+        serviceValidator.cuentaExists(numeroCuenta);
+
+        Cuenta cuenta = cuentaDao.find(numeroCuenta, true);
+
+        CuentaTransferencias cuentaTransferencias = new CuentaTransferencias(cuenta.getNumeroCuenta());
+
+        for (Movimiento movimiento : cuenta.getMovimientos()) {
+            cuentaTransferencias.addMovimientos(movimiento);
+        }
+        return cuentaTransferencias;
+
     }
 }

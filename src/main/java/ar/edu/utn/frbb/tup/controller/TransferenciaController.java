@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.controller.dto.TransferenciaDto;
+import ar.edu.utn.frbb.tup.controller.validator.DtoValidator;
 import ar.edu.utn.frbb.tup.controller.validator.TransferenciaValidator;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.CuentaTransferencias;
@@ -45,14 +46,7 @@ public class TransferenciaController {
     @CrossOrigin(origins = "*")
     @GetMapping("/cuenta/{cuentaId}/transacciones")
     public CuentaTransferencias obtenerTransacciones(@PathVariable long cuentaId) {
-        Cuenta cuenta = cuentaService.find(cuentaId, true);
-
-        CuentaTransferencias cuentaTransferencias = new CuentaTransferencias(cuenta.getNumeroCuenta());
-
-        for (Movimiento movimiento : cuenta.getMovimientos()) {
-            cuentaTransferencias.addMovimientos(movimiento);
-        }
-        return cuentaTransferencias;
-
+        // TODO VALIDAR LONG CORRECTO
+        return cuentaService.obtenerTransaccionesDeCuenta(cuentaId);
     }
 }

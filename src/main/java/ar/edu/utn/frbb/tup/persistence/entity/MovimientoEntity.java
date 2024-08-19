@@ -1,44 +1,36 @@
 package ar.edu.utn.frbb.tup.persistence.entity;
 
-import ar.edu.utn.frbb.tup.model.Cliente;
-import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.Movimiento;
-import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
-import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
-import ar.edu.utn.frbb.tup.persistence.ClienteDao;
+import ar.edu.utn.frbb.tup.model.tipos.TipoMovimiento;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
 public class MovimientoEntity extends BaseEntity {
 
-    long id;
-    LocalDateTime fechaCreacion;
-    double balance;
-    Long cuenta;
-    long cuentaDestino;
-    String moneda;
+    private long id;
+    private LocalDateTime fechaCreacion;
+    private Long cuenta;
+    private double monto;
+    private String descripcionBreve;
+    private String tipo;
 
     public MovimientoEntity(Movimiento movimiento) {
         super(movimiento.getId());
         this.id = movimiento.getId();
-        this.balance = movimiento.getBalance();
         this.cuenta = movimiento.getCuenta().getNumeroCuenta();
-        this.moneda = movimiento.getMoneda().toString();
-        this.cuentaDestino = movimiento.getCuentaDestino();
+        this.monto = movimiento.getMonto();
+        this.descripcionBreve = movimiento.getDescripcionBreve();
+        this.tipo = movimiento.getTipo().toString();
         this.fechaCreacion = movimiento.getFechaCreacion();
     }
 
     public Movimiento toMovimiento() {
         Movimiento movimiento = new Movimiento();
-        movimiento.setBalance(this.balance);
+        movimiento.setMonto(this.monto);
         movimiento.setId(this.id);
-        movimiento.setCuentaDestino(this.cuentaDestino);
-        movimiento.setMoneda(TipoMoneda.valueOf(this.moneda));
+        movimiento.setTipo(TipoMovimiento.valueOf(this.tipo.toUpperCase()));
+        movimiento.setDescripcionBreve(this.descripcionBreve);
         movimiento.setFechaCreacion(this.fechaCreacion);
 
         if (this.cuenta != null) {
@@ -65,14 +57,6 @@ public class MovimientoEntity extends BaseEntity {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
-
     public long getCuenta() {
         return cuenta;
     }
@@ -81,20 +65,32 @@ public class MovimientoEntity extends BaseEntity {
         this.cuenta = cuenta;
     }
 
-    public long getCuentaDestino() {
-        return cuentaDestino;
+    public void setCuenta(Long cuenta) {
+        this.cuenta = cuenta;
     }
 
-    public void setCuentaDestino(long cuentaDestino) {
-        this.cuentaDestino = cuentaDestino;
+    public double getMonto() {
+        return monto;
     }
 
-    public String getMoneda() {
-        return moneda;
+    public void setMonto(double monto) {
+        this.monto = monto;
     }
 
-    public void setMoneda(String moneda) {
-        this.moneda = moneda;
+    public String getDescripcionBreve() {
+        return descripcionBreve;
+    }
+
+    public void setDescripcionBreve(String descripcionBreve) {
+        this.descripcionBreve = descripcionBreve;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
 }
