@@ -31,69 +31,81 @@ public class TransferenciaService {
     @Autowired
     ServiceValidator serviceValidator;
 
-    private void logicaDeNegocioALaCuentaDestino(Cuenta cuentaDestino, TransferenciaDto transferenciaDto) {
-        if (transferenciaDto.getMoneda().equals("pesos") && transferenciaDto.getMonto() >= 1000000) {
-            cuentaDestino.setBalance(cuentaDestino.getBalance() + (transferenciaDto.getMonto() * 0.98));
-        } else if (transferenciaDto.getMoneda().equals("dolares") && transferenciaDto.getMonto() >= 5000) {
-            cuentaDestino.setBalance(cuentaDestino.getBalance() + (transferenciaDto.getMonto() * 0.95));
-        } else {
-            cuentaDestino.setBalance(cuentaDestino.getBalance() + (transferenciaDto.getMonto()));
+    public void logicaDeNegocioALaCuentaDestino(Cuenta cuentaDestino, TransferenciaDto transferenciaDto) {
+        double monto = transferenciaDto.getMonto();
+
+        if ("pesos".equals(transferenciaDto.getMoneda()) && monto >= 1000000) {
+            monto = monto * 0.98;
+        } else if ("dolares".equals(transferenciaDto.getMoneda()) && monto >= 5000) {
+            monto = monto * 0.95;
         }
 
-    }
-
-    private TransferenciaResultado cuentaDestinoEnBanco(Cuenta cuentaOrigen, TransferenciaDto transferenciaDto)
-            throws NoAlcanzaException, CantidadNegativaException {
-
-        Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
-
-        // Lógica de negocio
-        logicaDeNegocioALaCuentaDestino(cuentaDestino, transferenciaDto);
-
-        cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
-
-        TransferenciaResultado transferenciaResultado = new TransferenciaResultado();
-        transferenciaResultado.setEstado(TipoEstadoDeTransferencia.EXITOSA)
-                .setMensaje("Se realizo la transferencia");
-
-        cuentaService.registrarMovimientoEntrante(cuentaDestino, transferenciaDto);
-        cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
-
-        return transferenciaResultado;
-
-        // return new TransferenciaResultado();
-    }
-
-    private TransferenciaResultado cuentaDestinoEnOtroBanco(Cuenta cuentaOrigen, TransferenciaDto transferenciaDto)
-            throws NoAlcanzaException, CantidadNegativaException {
-        TransferenciaResultado transferenciaResultado = new TransferenciaResultado();
-
-        if (TipoTransferenciaResultado.OK.equals(banelcoService.transferir(transferenciaDto))) {
-            cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
-
-            cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
-
-            return transferenciaResultado.setMensaje("Se hizo la transferencia")
-                    .setEstado(TipoEstadoDeTransferencia.EXITOSA);
-        }
-
-        return transferenciaResultado.setMensaje("la cuenta de destino no esta en el banco");
-
+        cuentaDestino.setBalance(cuentaDestino.getBalance() + monto);
     }
 
     public TransferenciaResultado transferir(TransferenciaDto transferenciaDto)
             throws NoAlcanzaException, CantidadNegativaException {
+        TransferenciaResultado transferenciaResultado = new TransferenciaResultado();
 
-        serviceValidator.cuentaExists(transferenciaDto.getCuentaOrigen());
-        serviceValidator.cuentaTieneSaldoSuficiente(transferenciaDto.getCuentaOrigen(), transferenciaDto.getMonto());
+        try {
 
-        Cuenta cuentaOrigen = cuentaDao.find(transferenciaDto.getCuentaOrigen());
+            serviceValidator.cuentaExists(transferenciaDto.getCuentaOrigen());
+            serviceValidator.cuentaTieneSaldoSuficiente(transferenciaDto.getCuentaOrigen(),
+                    transferenciaDto.getMonto());
 
-        if (cuentaService.find(transferenciaDto.getCuentaDestino()) != null) {
-            return cuentaDestinoEnBanco(cuentaOrigen, transferenciaDto);
-        } else {
-            return cuentaDestinoEnOtroBanco(cuentaOrigen, transferenciaDto);
+            Cuenta cuentaOrigen = cuentaDao.find(transferenciaDto.getCuentaOrigen());
+            Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
+
+            if (cuentaDestino != null) {
+                // Lógica de negocio
+                logicaDeNegocioALaCuentaDestino(cuentaDestino, transferenciaDto);
+
+                cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
+
+                cuentaService.registrarMovimientoEntrante(cuentaDestino, transferenciaDto);
+                cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
+
+                return new TransferenciaResultado().setEstado(TipoEstadoDeTransferencia.EXITOSA)
+                        .setMensaje("Se realizo la transferencia");
+
+            } else {
+                if (TipoTransferenciaResultado.OK.equals(banelcoService.transferir(transferenciaDto))) {
+                    cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
+
+                    cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
+
+                    return transferenciaResultado.setMensaje("Se hizo la transferencia")
+                            .setEstado(TipoEstadoDeTransferencia.EXITOSA);
+                }
+                return transferenciaResultado.setMensaje("El servicio de transferencia a otra cuenta fallo")
+                        .setEstado(TipoEstadoDeTransferencia.FALLIDA);
+
+            }
+
+        } catch (Exception e) {
+            return transferenciaResultado.setEstado(TipoEstadoDeTransferencia.FALLIDA)
+                    .setMensaje(e.getMessage());
         }
+    }
 
+    public TransferenciaResultado recibirTransferencia(TransferenciaDto transferenciaDto)
+            throws NoAlcanzaException, CantidadNegativaException {
+
+        try {
+            serviceValidator.cuentaExists(transferenciaDto.getCuentaDestino());
+
+            Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
+
+            logicaDeNegocioALaCuentaDestino(cuentaDestino, transferenciaDto);
+
+            cuentaService.registrarMovimientoEntrante(cuentaDestino, transferenciaDto);
+
+            return new TransferenciaResultado().setEstado(TipoEstadoDeTransferencia.EXITOSA)
+                    .setMensaje("Se realizo la transferencia");
+
+        } catch (Exception e) {
+            return new TransferenciaResultado().setEstado(TipoEstadoDeTransferencia.FALLIDA)
+                    .setMensaje(e.getMessage());
+        }
     }
 }
