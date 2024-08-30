@@ -74,7 +74,7 @@ public class CuentaService {
         Movimiento movimiento = new Movimiento();
         movimiento.setCuenta(cuentaDestino);
         movimiento.setMonto(transferenciaDto.getMonto());
-        movimiento.setDescripcionBreve("Transferencia Entrante de " + transferenciaDto.getCuentaDestino());
+        movimiento.setDescripcionBreve("Transferencia Entrante de " + transferenciaDto.getCuentaOrigen());
         movimiento.setTipo(TipoMovimiento.TRANSFERENCIA);
 
         cuentaDestino.addMovimiento(movimiento);

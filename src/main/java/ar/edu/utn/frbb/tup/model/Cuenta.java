@@ -28,8 +28,8 @@ public class Cuenta {
 
     public Cuenta(CuentaDto cuentaDto) {
         this.numeroCuenta = new Random().nextLong();
-        // this.balance = 0;
-        this.balance = 1000000;// TODO: Eliminar
+        this.balance = 0;
+        // this.balance = 1000000;// TODO: Eliminar
         this.fechaCreacion = LocalDateTime.now();
 
         this.tipoCuenta = cuentaDto.parseTipoCuenta();

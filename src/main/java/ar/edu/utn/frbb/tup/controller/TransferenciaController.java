@@ -43,6 +43,15 @@ public class TransferenciaController {
         return transferenciaService.transferir(transferenciaDto);
     }
 
+    @PostMapping("/receive/transfer")
+    @CrossOrigin(origins = "*")
+    public TransferenciaResultado recibirTransferencia(@RequestBody TransferenciaDto transferenciaDto)
+            throws NoAlcanzaException, CantidadNegativaException {
+        transferenciaValidator.validate(transferenciaDto);
+
+        return transferenciaService.recibirTransferencia(transferenciaDto);
+    }
+
     @CrossOrigin(origins = "*")
     @GetMapping("/cuenta/{cuentaId}/transacciones")
     public CuentaTransferencias obtenerTransacciones(@PathVariable long cuentaId) {
