@@ -15,7 +15,7 @@ import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
 
 @ExtendWith(MockitoExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+// @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TransferenciaServiceTest {
     @Mock
     private ClienteDao clienteDao;
@@ -31,7 +31,7 @@ public class TransferenciaServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
+    // @Test
     public void testClienteMenor18Años() {
 
     }

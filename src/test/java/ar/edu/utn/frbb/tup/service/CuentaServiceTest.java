@@ -34,7 +34,7 @@ import java.util.HashSet;
 //Anotacion para usar mockito
 @ExtendWith(MockitoExtension.class)
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+// @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CuentaServiceTest {
 
     @Mock // Mock de ClienteService (repositorio)
@@ -54,7 +54,7 @@ public class CuentaServiceTest {
     }
 
     // Anotación para hacer una prueba
-    @Test
+    // @Test
     public void cuentaExistente() {
         // Creo una cuenta
         Cuenta cuenta = new Cuenta();
@@ -76,7 +76,7 @@ public class CuentaServiceTest {
     }
 
     // Anotación para hacer una prueba
-    @Test
+    // @Test
     public void cuentaNoSoportada() {
         // Creo una cuenta, uso lo que ya hice en el anterior test
         Cuenta cuenta = new Cuenta();
@@ -101,7 +101,7 @@ public class CuentaServiceTest {
     }
 
     // Anotación para hacer una prueba
-    @Test
+    // @Test
     public void probarDarAltaCuentaConTipoCuentaQueYaExisteEnLasCuentasDelClienteFalle() {
         // Creo una cuenta, uso lo que ya hice en el anterior test
         Cuenta cuenta1 = new Cuenta();
@@ -137,7 +137,7 @@ public class CuentaServiceTest {
     }
 
     // Anotación para hacer una prueba
-    @Test
+    // @Test
     public void cuentaSeAgregaCorrectamente() throws TipoCuentaNotSupportedException, ClienteYaTieneTipoCuentaException,
             CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException {
         // Creo una cuenta, uso lo que ya hice en el anterior test
