@@ -8,16 +8,18 @@ public class ClienteDto extends PersonaDto {
         return tipoPersona;
     }
 
-    public void setTipoPersona(String tipoPersona) {
+    public ClienteDto setTipoPersona(String tipoPersona) {
         this.tipoPersona = tipoPersona;
+        return this;
     }
 
     public String getBanco() {
         return banco;
     }
 
-    public void setBanco(String banco) {
+    public ClienteDto setBanco(String banco) {
         this.banco = banco;
+        return this;
     }
 
     @Override

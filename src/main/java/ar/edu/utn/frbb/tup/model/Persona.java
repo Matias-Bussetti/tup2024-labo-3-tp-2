@@ -9,7 +9,9 @@ public class Persona {
     private long dni;
     private LocalDate fechaNacimiento;
 
-    public Persona() {}
+    public Persona() {
+    }
+
     public Persona(long dni, String apellido, String nombre, String fechaNacimiento) {
         this.dni = dni;
         this.apellido = apellido;
@@ -21,32 +23,36 @@ public class Persona {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public Persona setNombre(String nombre) {
         this.nombre = nombre;
+        return this;
     }
 
     public String getApellido() {
         return apellido;
     }
 
-    public void setApellido(String apellido) {
+    public Persona setApellido(String apellido) {
         this.apellido = apellido;
+        return this;
     }
 
     public long getDni() {
         return dni;
     }
 
-    public void setDni(long dni) {
+    public Persona setDni(long dni) {
         this.dni = dni;
+        return this;
     }
 
     public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+    public Persona setFechaNacimiento(LocalDate fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+        return this;
     }
 
     public int getEdad() {
@@ -55,4 +61,3 @@ public class Persona {
         return agePeriod.getYears();
     }
 }
-

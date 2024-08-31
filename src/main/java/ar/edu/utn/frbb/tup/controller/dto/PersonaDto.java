@@ -2,6 +2,7 @@ package ar.edu.utn.frbb.tup.controller.dto;
 
 import java.time.LocalDate;
 
+import ar.edu.utn.frbb.tup.model.Persona;
 import ar.edu.utn.frbb.tup.model.tipos.TipoPersona;
 
 public class PersonaDto {
@@ -14,31 +15,35 @@ public class PersonaDto {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public PersonaDto setNombre(String nombre) {
         this.nombre = nombre;
+        return this;
     }
 
     public String getApellido() {
         return apellido;
     }
 
-    public void setApellido(String apellido) {
+    public PersonaDto setApellido(String apellido) {
         this.apellido = apellido;
+        return this;
     }
 
     public long getDni() {
         return dni;
     }
 
-    public void setDni(long dni) {
+    public PersonaDto setDni(long dni) {
         this.dni = dni;
+        return this;
     }
 
     public String getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(String fechaNacimiento) {
+    public PersonaDto setFechaNacimiento(String fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+        return this;
     }
 }

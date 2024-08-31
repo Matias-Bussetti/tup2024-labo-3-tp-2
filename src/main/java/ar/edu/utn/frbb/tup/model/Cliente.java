@@ -1,14 +1,9 @@
 package ar.edu.utn.frbb.tup.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
@@ -20,10 +15,6 @@ public class Cliente extends Persona {
     private TipoPersona tipoPersona;
     private String banco;
     private LocalDate fechaAlta;
-
-    @JsonManagedReference // Para evitar la serialización circular y bucles infinitos en la conversión de
-                          // objetos a JSON, puedes usar varias estrategias en Spring Boot. Aquí te dejo
-                          // algunas opciones:
     private Set<Cuenta> cuentas = new HashSet<>();
 
     public Cliente() {
@@ -40,42 +31,46 @@ public class Cliente extends Persona {
         return tipoPersona;
     }
 
-    public void setTipoPersona(TipoPersona tipoPersona) {
+    public Cliente setTipoPersona(TipoPersona tipoPersona) {
         this.tipoPersona = tipoPersona;
+        return this;
     }
 
-    // Added
-    public void setTipoPersona(String tipoPersona) {
+    public Cliente setTipoPersona(String tipoPersona) {
         if ("F".equals(tipoPersona)) {
             this.tipoPersona = TipoPersona.PERSONA_FISICA;
         } else if ("J".equals(tipoPersona)) {
             this.tipoPersona = TipoPersona.PERSONA_JURIDICA;
         }
+        return this;
     }
 
     public String getBanco() {
         return banco;
     }
 
-    public void setBanco(String banco) {
+    public Cliente setBanco(String banco) {
         this.banco = banco;
+        return this;
     }
 
     public LocalDate getFechaAlta() {
         return fechaAlta;
     }
 
-    public void setFechaAlta(LocalDate fechaAlta) {
+    public Cliente setFechaAlta(LocalDate fechaAlta) {
         this.fechaAlta = fechaAlta;
+        return this;
     }
 
     public Set<Cuenta> getCuentas() {
         return cuentas;
     }
 
-    public void addCuenta(Cuenta cuenta) {
+    public Cliente addCuenta(Cuenta cuenta) {
         this.cuentas.add(cuenta);
         cuenta.setTitular(this);
+        return this;
     }
 
     public boolean tieneCuenta(TipoCuenta tipoCuenta, TipoMoneda moneda) {
@@ -96,4 +91,5 @@ public class Cliente extends Persona {
                 ", cuentas=" + cuentas +
                 '}';
     }
+
 }
