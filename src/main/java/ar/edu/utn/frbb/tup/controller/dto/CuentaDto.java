@@ -11,8 +11,9 @@ public class CuentaDto {
         return tipoCuenta;
     }
 
-    public void setTipoCuenta(String tipoCuenta) {
+    public CuentaDto setTipoCuenta(String tipoCuenta) {
         this.tipoCuenta = tipoCuenta;
+        return this;
     }
 
     public String getMoneda() {
@@ -27,8 +28,9 @@ public class CuentaDto {
         return TipoMoneda.valueOf(moneda);
     }
 
-    public void setMoneda(String moneda) {
+    public CuentaDto setMoneda(String moneda) {
         this.moneda = moneda;
+        return this;
     }
 
 }

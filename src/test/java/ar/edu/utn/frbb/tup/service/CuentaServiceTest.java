@@ -12,8 +12,13 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.base.MockitoException;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
+import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
+import ar.edu.utn.frbb.tup.controller.dto.TransferenciaDto;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
+import ar.edu.utn.frbb.tup.model.CuentaTransferencias;
+import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.ClienteYaTieneTipoCuentaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
@@ -21,28 +26,36 @@ import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNotSupportedException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
+import ar.edu.utn.frbb.tup.model.tipos.TipoMovimiento;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
+import ar.edu.utn.frbb.tup.service.validator.ServiceValidator;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 
 //Anotacion para usar mockito
 @ExtendWith(MockitoExtension.class)
 
-// @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CuentaServiceTest {
 
     @Mock // Mock de ClienteService (repositorio)
     private CuentaDao cuentaDao;
     @Mock // Mock de ClienteService (repositorio)
     private ClienteDao clienteDao;
+
+    @Mock
+    private ServiceValidator serviceValidator;
+
     @Mock
     private ClienteService clienteService;
+
     @InjectMocks
     private CuentaService cuentaService;
 
@@ -53,115 +66,74 @@ public class CuentaServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // Anotación para hacer una prueba
-    // @Test
-    public void cuentaExistente() {
-        // Creo una cuenta
-        Cuenta cuenta = new Cuenta();
-        // Digamos que la cuenta tiene este dni
-        Long dni = 45000L;
-        cuenta.setNumeroCuenta(dni);
+    @Test
+    public void testDarDeAltaCuentaSuccess() throws TipoCuentaAlreadyExistsException, TipoCuentaNotSupportedException,
+            ClienteYaTieneTipoCuentaException, CuentaAlreadyExistsException {
+        CuentaDto cuentaDto = new CuentaDto().setMoneda("PESOS").setTipoCuenta("CA$");
 
-        // Entonces hacemos que cuando se ejecute cuentaDao.find
-        // simule que al pasarle el dni, nos retorna la cuenta ya creada
-        when(cuentaDao.find(dni)).thenReturn(cuenta);
-
-        // Entonces hacemos la prueba de que cuando
-        // se ejecuta el método cuentaService.darDeAltaCuenta
-        // con la cuenta y dni, como establecimos que cuando se ejecuta find nos
-        // devuelve una cuenta
-        // entoces tira error. Osea lo que esperamos
-        // assertThrows(CuentaAlreadyExistsException.class, () ->
-        // cuentaService.darDeAltaCuenta(cuenta, dni));
-    }
-
-    // Anotación para hacer una prueba
-    // @Test
-    public void cuentaNoSoportada() {
-        // Creo una cuenta, uso lo que ya hice en el anterior test
-        Cuenta cuenta = new Cuenta();
-        // Digamos que la cuenta tiene este dni
-        Long dni = 45000L;
-        cuenta.setNumeroCuenta(dni);
-        // Setteo un tipo no soportado
-        cuenta.setTipoCuenta(TipoCuenta.CAJA_AHORRO);
-        // Para ver si falla cuando si es soportado ->
-        // cuenta.setTipoCuenta(TipoCuenta.CA$);
-
-        // Entonces hacemos que cuando se ejecute cuentaDao.find
-        // simule que al pasarle el dni, nos null para poder continuar
-        // la ejecucion hasta el checkeo
-        when(cuentaDao.find(dni)).thenReturn(null);
-
-        // Entonces hacemos la prueba de que cuando
-        // se pasa una cuenta con un tipo no soporto
-        // entoces tira error de tipocuentanosupported
-        // assertThrows(TipoCuentaNotSupportedException.class, () ->
-        // cuentaService.darDeAltaCuenta(cuenta, dni));
-    }
-
-    // Anotación para hacer una prueba
-    // @Test
-    public void probarDarAltaCuentaConTipoCuentaQueYaExisteEnLasCuentasDelClienteFalle() {
-        // Creo una cuenta, uso lo que ya hice en el anterior test
-        Cuenta cuenta1 = new Cuenta();
-        Cuenta cuenta2 = new Cuenta();
-
-        // Digamos que la cuenta tiene este dni
-        Long dni = 45000L;
-        cuenta1.setNumeroCuenta(dni);
-        cuenta2.setNumeroCuenta(dni);
-        // Setteo el mismo tipo en las dos para que tire error
-        cuenta1.setTipoCuenta(TipoCuenta.CA$);
-        cuenta1.setMoneda(TipoMoneda.PESOS);
-
-        cuenta2.setMoneda(TipoMoneda.PESOS);
-        cuenta2.setTipoCuenta(TipoCuenta.CA$);
-        // cuenta2.setTipoCuenta(TipoCuenta.CAU$S);// ! Aaca deberia tirar error
-
-        Cliente cliente = new Cliente(); // Creamos un cliente para simular
-        cliente.setDni(dni);
-        cliente.addCuenta(cuenta1); // Agregamos la cuenta
-
-        when(cuentaDao.find(dni)).thenReturn(null);// Cualculo que se ejecuta todas las veces?
-
-        // Aca lo que hago es retornar el cliente de arriba para
-        // simular la busqueda
-        when(clienteService.buscarClientePorDni(dni)).thenReturn(cliente);
-
-        // Entonces hacemos la prueba de que cuando
-        // se pasa una cuenta con un tipo no soporto
-        // entoces tira error de tipocuentanosupported
-        // assertThrows(ClienteYaTieneTipoCuentaException.class, () ->
-        // cuentaService.darDeAltaCuenta(cuenta2, dni));
-    }
-
-    // Anotación para hacer una prueba
-    // @Test
-    public void cuentaSeAgregaCorrectamente() throws TipoCuentaNotSupportedException, ClienteYaTieneTipoCuentaException,
-            CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException {
-        // Creo una cuenta, uso lo que ya hice en el anterior test
-        Cuenta cuenta = new Cuenta();
-        cuenta.setTipoCuenta(TipoCuenta.CAU$S);
-
-        // Digamos que la cuenta tiene este dni
-        Long dni = 45000L;
-        cuenta.setNumeroCuenta(dni);
-
-        when(cuentaDao.find(dni)).thenReturn(null);
-
-        // Aca lo que hago es retornar el cliente de arriba para
-        // simular la busqueda
         Cliente cliente = new Cliente();
-        when(clienteService.buscarClientePorDni(dni)).thenReturn(cliente);
+        cliente.setNombre("matias").setApellido("bsstt").setDni(4326).setFechaNacimiento(LocalDate.of(2002, 1, 1));
+        cliente.setBanco("banco").setTipoPersona("F");
 
-        // doNothing().when(clienteService).agregarCuenta(cuenta, dni);
+        Cuenta cuenta = cuentaService.darDeAltaCuenta(cuentaDto, 4326);
 
-        // cuentaService.darDeAltaCuenta(cuenta, dni);
-
-        verify(clienteService, times(1)).agregarCuenta(cuenta, dni);
         verify(cuentaDao, times(1)).save(cuenta);
-        // assertTrue(cliente.getCuentas().contains(cuenta));
-
     }
+
+    @Test
+    public void testFindSuccess() {
+        Cuenta cuenta = new Cuenta();
+
+        when(cuentaDao.find(cuenta.getNumeroCuenta())).thenReturn(cuenta);
+        when(cuentaDao.find(cuenta.getNumeroCuenta(), true)).thenReturn(cuenta);
+
+        assertDoesNotThrow(() -> cuentaService.find(cuenta.getNumeroCuenta()));
+        assertDoesNotThrow(() -> cuentaService.find(cuenta.getNumeroCuenta(), true));
+    }
+
+    @Test
+    public void testRegistrarMovimientoSaliente() {
+        Cuenta cuenta = new Cuenta();
+        TransferenciaDto transferenciaDto = new TransferenciaDto();
+
+        transferenciaDto.setCuentaDestino(cuenta.getNumeroCuenta()).setCuentaDestino(123456789).setMoneda("pesos")
+                .setMonto(1000);
+
+        cuentaService.registrarMovimientoSaliente(cuenta, transferenciaDto);
+
+        assertEquals(1, cuenta.getMovimientos().size());
+    }
+
+    @Test
+    public void testRegistrarMovimientoEntrante() {
+        Cuenta cuenta = new Cuenta();
+        TransferenciaDto transferenciaDto = new TransferenciaDto();
+
+        transferenciaDto.setCuentaDestino(cuenta.getNumeroCuenta()).setCuentaDestino(123456789).setMoneda("pesos")
+                .setMonto(1000);
+
+        cuentaService.registrarMovimientoEntrante(cuenta, transferenciaDto);
+
+        assertEquals(1, cuenta.getMovimientos().size());
+    }
+
+    @Test
+    public void testObtenerTransaccionesDeCuenta() {
+        Cuenta cuenta = new Cuenta();
+        TransferenciaDto transferenciaDto = new TransferenciaDto();
+
+        transferenciaDto.setCuentaDestino(cuenta.getNumeroCuenta()).setCuentaDestino(123456789).setMoneda("pesos")
+                .setMonto(1000);
+
+        cuentaService.registrarMovimientoEntrante(cuenta, transferenciaDto);
+        cuentaService.registrarMovimientoEntrante(cuenta, transferenciaDto);
+
+        when(cuentaDao.find(cuenta.getNumeroCuenta(), true)).thenReturn(cuenta);
+
+        CuentaTransferencias cuentaTransferencias = cuentaService
+                .obtenerTransaccionesDeCuenta(cuenta.getNumeroCuenta());
+
+        assertEquals(2, cuentaTransferencias.getMovimientos().size());
+    }
+
 }

@@ -16,32 +16,36 @@ public class TransferenciaDto {
         return cuentaOrigen;
     }
 
-    public void setCuentaOrigen(long cuentaOrigen) {
+    public TransferenciaDto setCuentaOrigen(long cuentaOrigen) {
         this.cuentaOrigen = cuentaOrigen;
+        return this;
     }
 
     public long getCuentaDestino() {
         return cuentaDestino;
     }
 
-    public void setCuentaDestino(long cuentaDestino) {
+    public TransferenciaDto setCuentaDestino(long cuentaDestino) {
         this.cuentaDestino = cuentaDestino;
+        return this;
     }
 
     public double getMonto() {
         return monto;
     }
 
-    public void setMonto(double monto) {
+    public TransferenciaDto setMonto(double monto) {
         this.monto = monto;
+        return this;
     }
 
     public String getMoneda() {
         return moneda;
     }
 
-    public void setMoneda(String moneda) {
+    public TransferenciaDto setMoneda(String moneda) {
         this.moneda = moneda;
+        return this;
     }
 
 }
