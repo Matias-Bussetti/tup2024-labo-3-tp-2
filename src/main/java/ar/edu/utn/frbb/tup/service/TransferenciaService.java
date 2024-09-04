@@ -63,29 +63,23 @@ public class TransferenciaService {
                 cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
 
                 cuentaService.registrarMovimientoEntrante(cuentaDestino, transferenciaDto);
-                cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
-
-                return new TransferenciaResultado().setEstado(TipoEstadoDeTransferencia.EXITOSA)
-                        .setMensaje("Se realizo la transferencia");
-
             } else {
-                if (TipoTransferenciaResultado.OK.equals(banelcoService.transferir(transferenciaDto))) {
-                    cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
+                if (TipoTransferenciaResultado.ERROR.equals(banelcoService.transferir(transferenciaDto)))
+                    throw new Exception("El servicio de transferencia a otra cuenta fallo");
 
-                    cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
-
-                    return transferenciaResultado.setMensaje("Se hizo la transferencia")
-                            .setEstado(TipoEstadoDeTransferencia.EXITOSA);
-                }
-                return transferenciaResultado.setMensaje("El servicio de transferencia a otra cuenta fallo")
-                        .setEstado(TipoEstadoDeTransferencia.FALLIDA);
-
+                cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
             }
+
+            cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
+
+            return transferenciaResultado.setMensaje("Se hizo la transferencia")
+                    .setEstado(TipoEstadoDeTransferencia.EXITOSA);
 
         } catch (Exception e) {
             return transferenciaResultado.setEstado(TipoEstadoDeTransferencia.FALLIDA)
                     .setMensaje(e.getMessage());
         }
+
     }
 
     public TransferenciaResultado recibirTransferencia(TransferenciaDto transferenciaDto)
