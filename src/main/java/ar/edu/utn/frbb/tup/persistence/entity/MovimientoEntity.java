@@ -15,6 +15,10 @@ public class MovimientoEntity extends BaseEntity {
     private String descripcionBreve;
     private String tipo;
 
+    public MovimientoEntity() {
+        super(-1);
+    }
+
     public MovimientoEntity(Movimiento movimiento) {
         super(movimiento.getId());
         this.id = movimiento.getId();

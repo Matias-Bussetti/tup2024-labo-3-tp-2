@@ -45,10 +45,12 @@ public class DtoValidator {
     }
 
     public void stringIsTipoPersona(String string) {
+
         if (!(TipoPersona.PERSONA_FISICA.getDescripcion().equals(string)
                 || TipoPersona.PERSONA_JURIDICA.getDescripcion().equals(string))) {
             throw new IllegalArgumentException("El tipo de persona no es correcto");
         }
+
     }
 
     public void stringIsDateTime(String string) {

@@ -13,5 +13,6 @@ public class ClienteValidator {
     public void validate(ClienteDto clienteDto) {
         dtoValidator.stringIsTipoPersona(clienteDto.getTipoPersona());
         dtoValidator.stringIsDateTime(clienteDto.getFechaNacimiento());
+        dtoValidator.dniIsValid(clienteDto.getDni());
     }
 }

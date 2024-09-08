@@ -43,9 +43,21 @@ public class TransferenciaService {
         cuentaDestino.setBalance(cuentaDestino.getBalance() + monto);
     }
 
+    public void cuentaOrigenRealizarTransferencia(TransferenciaDto transferenciaDto)
+            throws NoAlcanzaException, CantidadNegativaException {
+        Cuenta cuentaOrigen = cuentaDao.find(transferenciaDto.getCuentaOrigen());
+        cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
+        cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
+    }
+
+    public void cuentaDestinoRealizarTransferencia(TransferenciaDto transferenciaDto) {
+        Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
+        logicaDeNegocioALaCuentaDestino(cuentaDestino, transferenciaDto);
+        cuentaService.registrarMovimientoEntrante(cuentaDestino, transferenciaDto);
+    }
+
     public TransferenciaResultado transferir(TransferenciaDto transferenciaDto)
             throws NoAlcanzaException, CantidadNegativaException {
-        TransferenciaResultado transferenciaResultado = new TransferenciaResultado();
 
         try {
 
@@ -53,31 +65,20 @@ public class TransferenciaService {
             serviceValidator.cuentaTieneSaldoSuficiente(transferenciaDto.getCuentaOrigen(),
                     transferenciaDto.getMonto());
 
-            Cuenta cuentaOrigen = cuentaDao.find(transferenciaDto.getCuentaOrigen());
-            Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
+            cuentaOrigenRealizarTransferencia(transferenciaDto);
 
-            if (cuentaDestino != null) {
-                // Lógica de negocio
-                logicaDeNegocioALaCuentaDestino(cuentaDestino, transferenciaDto);
-
-                cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
-
-                cuentaService.registrarMovimientoEntrante(cuentaDestino, transferenciaDto);
-            } else {
-                if (TipoTransferenciaResultado.ERROR.equals(banelcoService.transferir(transferenciaDto)))
-                    throw new Exception("El servicio de transferencia a otra cuenta fallo");
-
-                cuentaOrigen.debitarDeCuenta(transferenciaDto.getMonto());
+            if (cuentaDao.find(transferenciaDto.getCuentaDestino()) != null) {
+                cuentaDestinoRealizarTransferencia(transferenciaDto);
+                return new TransferenciaResultado(TipoEstadoDeTransferencia.EXITOSA, "Se hizo la transferencia");
             }
 
-            cuentaService.registrarMovimientoSaliente(cuentaOrigen, transferenciaDto);
+            if (TipoTransferenciaResultado.ERROR.equals(banelcoService.transferir(transferenciaDto)))
+                throw new Exception("El servicio de transferencia a otra cuenta fallo");
 
-            return transferenciaResultado.setMensaje("Se hizo la transferencia")
-                    .setEstado(TipoEstadoDeTransferencia.EXITOSA);
+            return new TransferenciaResultado(TipoEstadoDeTransferencia.EXITOSA, "Se hizo la transferencia");
 
         } catch (Exception e) {
-            return transferenciaResultado.setEstado(TipoEstadoDeTransferencia.FALLIDA)
-                    .setMensaje(e.getMessage());
+            return new TransferenciaResultado(TipoEstadoDeTransferencia.FALLIDA, e.getMessage());
         }
 
     }
@@ -88,18 +89,13 @@ public class TransferenciaService {
         try {
             serviceValidator.cuentaExists(transferenciaDto.getCuentaDestino());
 
-            Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
-
-            logicaDeNegocioALaCuentaDestino(cuentaDestino, transferenciaDto);
-
-            cuentaService.registrarMovimientoEntrante(cuentaDestino, transferenciaDto);
+            cuentaDestinoRealizarTransferencia(transferenciaDto);
 
             return new TransferenciaResultado().setEstado(TipoEstadoDeTransferencia.EXITOSA)
                     .setMensaje("Se realizo la transferencia");
 
         } catch (Exception e) {
-            return new TransferenciaResultado().setEstado(TipoEstadoDeTransferencia.FALLIDA)
-                    .setMensaje(e.getMessage());
+            return new TransferenciaResultado(TipoEstadoDeTransferencia.FALLIDA, e.getMessage());
         }
     }
 }

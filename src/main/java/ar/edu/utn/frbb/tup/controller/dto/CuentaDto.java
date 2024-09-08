@@ -21,11 +21,11 @@ public class CuentaDto {
     }
 
     public TipoCuenta parseTipoCuenta() {
-        return TipoCuenta.valueOf(tipoCuenta);
+        return TipoCuenta.valueOf(tipoCuenta.toUpperCase());
     }
 
     public TipoMoneda parseTipoMoneda() {
-        return TipoMoneda.valueOf(moneda);
+        return TipoMoneda.valueOf(moneda.toUpperCase());
     }
 
     public CuentaDto setMoneda(String moneda) {
