@@ -18,13 +18,12 @@ import org.springframework.stereotype.Service;
 
 public class CuentaEntity extends BaseEntity {
 
-    String nombre;
-    LocalDateTime fechaCreacion;
-    double balance;
-    String tipoCuenta;
-    String moneda;
-    Long titular;
-    long numeroCuenta;
+    private LocalDateTime fechaCreacion;
+    private double balance;
+    private String tipoCuenta;
+    private String moneda;
+    private Long titular;
+    private long numeroCuenta;
     private List<Long> movimientos;
 
     public CuentaEntity(Cuenta cuenta) {
@@ -58,14 +57,6 @@ public class CuentaEntity extends BaseEntity {
         }
 
         return cuenta;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public LocalDateTime getFechaCreacion() {
@@ -106,5 +97,21 @@ public class CuentaEntity extends BaseEntity {
 
     public void setNumeroCuenta(long numeroCuenta) {
         this.numeroCuenta = numeroCuenta;
+    }
+
+    public String getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(String moneda) {
+        this.moneda = moneda;
+    }
+
+    public List<Long> getMovimientos() {
+        return movimientos;
+    }
+
+    public void setMovimientos(List<Long> movimientos) {
+        this.movimientos = movimientos;
     }
 }
