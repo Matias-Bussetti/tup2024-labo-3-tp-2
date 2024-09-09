@@ -12,6 +12,12 @@ public class CuentaValidator {
 
     public void validate(CuentaDto cuentaDto, long dni) {
 
+        dtoValidator.propertyNotNull(cuentaDto.getMoneda(), "moneda");
+        dtoValidator.propertyNotNull(cuentaDto.getTipoCuenta(), "Tipo Cuenta");
+
+        dtoValidator.stringNotEmpty(cuentaDto.getMoneda(), "moneda");
+        dtoValidator.stringNotEmpty(cuentaDto.getTipoCuenta(), "Tipo Cuenta");
+
         dtoValidator.stringIsTipoCuenta(cuentaDto.getTipoCuenta());
         dtoValidator.stringIsTipoMoneda(cuentaDto.getMoneda());
         dtoValidator.dniIsValid(dni);

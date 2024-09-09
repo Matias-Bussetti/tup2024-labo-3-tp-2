@@ -9,6 +9,7 @@ import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.TransferenciaResultado;
 import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.CuentaDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.NoAlcanzaException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoEstadoDeTransferencia;
 import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
@@ -57,17 +58,22 @@ public class TransferenciaService {
     }
 
     public TransferenciaResultado transferir(TransferenciaDto transferenciaDto)
-            throws NoAlcanzaException, CantidadNegativaException {
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
 
         try {
 
             serviceValidator.cuentaExists(transferenciaDto.getCuentaOrigen());
             serviceValidator.cuentaTieneSaldoSuficiente(transferenciaDto.getCuentaOrigen(),
                     transferenciaDto.getMonto());
+            serviceValidator.cuentaEsDeTipoMoneda(transferenciaDto.getCuentaOrigen(),
+                    TipoMoneda.valueOf(transferenciaDto.getMoneda().toUpperCase()));
 
             cuentaOrigenRealizarTransferencia(transferenciaDto);
 
             if (cuentaDao.find(transferenciaDto.getCuentaDestino()) != null) {
+                serviceValidator.cuentaEsDeTipoMoneda(transferenciaDto.getCuentaDestino(),
+                        TipoMoneda.valueOf(transferenciaDto.getMoneda().toUpperCase()));
+
                 cuentaDestinoRealizarTransferencia(transferenciaDto);
                 return new TransferenciaResultado(TipoEstadoDeTransferencia.EXITOSA, "Se hizo la transferencia");
             }
@@ -84,10 +90,13 @@ public class TransferenciaService {
     }
 
     public TransferenciaResultado recibirTransferencia(TransferenciaDto transferenciaDto)
-            throws NoAlcanzaException, CantidadNegativaException {
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
 
         try {
             serviceValidator.cuentaExists(transferenciaDto.getCuentaDestino());
+
+            serviceValidator.cuentaEsDeTipoMoneda(transferenciaDto.getCuentaDestino(),
+                    TipoMoneda.valueOf(transferenciaDto.getMoneda().toUpperCase()));
 
             cuentaDestinoRealizarTransferencia(transferenciaDto);
 

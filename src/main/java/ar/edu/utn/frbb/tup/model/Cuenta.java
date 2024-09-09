@@ -27,7 +27,7 @@ public class Cuenta {
     private Set<Movimiento> movimientos = new HashSet<>();
 
     public Cuenta(CuentaDto cuentaDto) {
-        this.numeroCuenta = new Random().nextLong();
+        this.numeroCuenta = new Random().nextLong(999_999_999);
         this.balance = 0;
         // this.balance = 1000000;// TODO: Eliminar
         this.fechaCreacion = LocalDateTime.now();

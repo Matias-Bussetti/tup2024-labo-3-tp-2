@@ -1,9 +1,9 @@
 package ar.edu.utn.frbb.tup.controller.dto;
 
 public class TransferenciaDto {
-    private long cuentaOrigen;
-    private long cuentaDestino;
-    private double monto;
+    private Long cuentaOrigen;
+    private Long cuentaDestino;
+    private Double monto;
     private String moneda;
 
     @Override
@@ -12,7 +12,7 @@ public class TransferenciaDto {
                 + monto + ", moneda=" + moneda + "]";
     }
 
-    public long getCuentaOrigen() {
+    public Long getCuentaOrigen() {
         return cuentaOrigen;
     }
 
@@ -21,7 +21,7 @@ public class TransferenciaDto {
         return this;
     }
 
-    public long getCuentaDestino() {
+    public Long getCuentaDestino() {
         return cuentaDestino;
     }
 
@@ -30,7 +30,7 @@ public class TransferenciaDto {
         return this;
     }
 
-    public double getMonto() {
+    public Double getMonto() {
         return monto;
     }
 

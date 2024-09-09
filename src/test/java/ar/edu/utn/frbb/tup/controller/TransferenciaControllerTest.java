@@ -20,6 +20,7 @@ import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.controller.validator.ClienteValidator;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.service.ClienteService;
 import ar.edu.utn.frbb.tup.service.validator.ServiceValidator;
@@ -70,7 +71,8 @@ public class TransferenciaControllerTest {
     }
 
     @Test
-    public void testObtenerCliente() throws ClienteAlreadyExistsException, CuentaAlreadyExistsException {
+    public void testObtenerCliente()
+            throws ClienteAlreadyExistsException, CuentaAlreadyExistsException, ClienteDoesNotExistException {
         ClienteDto clienteDto = new ClienteDto();
         clienteDto.setApellido("A").setNombre("B").setFechaNacimiento("2001-01-11").setDni(10_000_000);
         clienteDto.setBanco("banco").setTipoPersona("h");

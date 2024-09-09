@@ -5,8 +5,10 @@ import ar.edu.utn.frbb.tup.controller.dto.TransferenciaDto;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.CuentaTransferencias;
 import ar.edu.utn.frbb.tup.model.Movimiento;
+import ar.edu.utn.frbb.tup.model.exception.ClienteDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.ClienteYaTieneTipoCuentaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.CuentaDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNotSupportedException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
@@ -31,7 +33,7 @@ public class CuentaService {
 
     public Cuenta darDeAltaCuenta(CuentaDto cuentaDto, long dniTitular)
             throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException, TipoCuentaNotSupportedException,
-            ClienteYaTieneTipoCuentaException {
+            ClienteYaTieneTipoCuentaException, ClienteDoesNotExistException {
 
         Cuenta cuenta = new Cuenta(cuentaDto);
         cuenta.setMoneda(cuentaDto.parseTipoMoneda());
@@ -85,7 +87,7 @@ public class CuentaService {
         return true;
     }
 
-    public CuentaTransferencias obtenerTransaccionesDeCuenta(long numeroCuenta) {
+    public CuentaTransferencias obtenerTransaccionesDeCuenta(long numeroCuenta) throws CuentaDoesNotExistException {
 
         serviceValidator.cuentaExists(numeroCuenta);
 

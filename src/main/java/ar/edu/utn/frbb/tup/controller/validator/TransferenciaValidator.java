@@ -11,6 +11,12 @@ public class TransferenciaValidator {
     private DtoValidator dtoValidator;
 
     public void validate(TransferenciaDto transferenciaDto) {
+
+        dtoValidator.propertyNotNull(transferenciaDto.getMoneda(), "moneda");
+        dtoValidator.propertyNotNull(transferenciaDto.getMonto(), "monto");
+        dtoValidator.propertyNotNull(transferenciaDto.getCuentaDestino(), "Cuenta destino");
+        dtoValidator.propertyNotNull(transferenciaDto.getCuentaOrigen(), "Cuenta Origen");
+
         dtoValidator.stringIsTipoMoneda(transferenciaDto.getMoneda());
         dtoValidator.numberIsBiggerThan(transferenciaDto.getMonto(), 0);
         dtoValidator.longIsDistinctThanLong(transferenciaDto.getCuentaDestino(), transferenciaDto.getCuentaOrigen());

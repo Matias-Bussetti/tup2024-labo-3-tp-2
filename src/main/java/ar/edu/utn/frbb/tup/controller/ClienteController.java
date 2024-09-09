@@ -4,6 +4,7 @@ import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.controller.validator.ClienteValidator;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class ClienteController {
 
     @CrossOrigin(origins = "*")
     @GetMapping
-    public Cliente obtenerCliente(@RequestParam long dni) throws ClienteAlreadyExistsException {
+    public Cliente obtenerCliente(@RequestParam long dni)
+            throws ClienteAlreadyExistsException, ClienteDoesNotExistException {
         return clienteService.buscarClientePorDni(dni);
     }
 }

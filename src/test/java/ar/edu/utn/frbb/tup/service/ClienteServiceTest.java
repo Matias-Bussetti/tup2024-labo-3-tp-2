@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.service;
 import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.model.*;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
@@ -56,7 +57,7 @@ public class ClienteServiceTest {
     }
 
     @Test
-    public void testAgregarCuentaSuccess() throws TipoCuentaAlreadyExistsException {
+    public void testAgregarCuentaSuccess() throws TipoCuentaAlreadyExistsException, ClienteDoesNotExistException {
         Cliente cliente = new Cliente();
         cliente.setNombre("matias").setApellido("bsstt").setDni(4326).setFechaNacimiento(LocalDate.of(2002, 1, 1));
         cliente.setBanco("banco").setTipoPersona("F");

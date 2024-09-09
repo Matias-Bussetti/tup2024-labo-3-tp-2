@@ -20,8 +20,10 @@ import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.CuentaTransferencias;
 import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.ClienteYaTieneTipoCuentaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.CuentaDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNotSupportedException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
@@ -68,7 +70,7 @@ public class CuentaServiceTest {
 
     @Test
     public void testDarDeAltaCuentaSuccess() throws TipoCuentaAlreadyExistsException, TipoCuentaNotSupportedException,
-            ClienteYaTieneTipoCuentaException, CuentaAlreadyExistsException {
+            ClienteYaTieneTipoCuentaException, CuentaAlreadyExistsException, ClienteDoesNotExistException {
         CuentaDto cuentaDto = new CuentaDto().setMoneda("PESOS").setTipoCuenta("CA$");
 
         Cliente cliente = new Cliente();
@@ -118,7 +120,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testObtenerTransaccionesDeCuenta() {
+    public void testObtenerTransaccionesDeCuenta() throws CuentaDoesNotExistException {
         Cuenta cuenta = new Cuenta();
         TransferenciaDto transferenciaDto = new TransferenciaDto();
 

@@ -1,4 +1,5 @@
 package ar.edu.utn.frbb.tup.controller.handler;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -7,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class CustomApiError {
     private Integer errorCode;
     private String errorMessage;
-
-
 
     public Integer getErrorCode() {
         return errorCode;
@@ -26,4 +25,3 @@ public class CustomApiError {
         this.errorMessage = errorMessage;
     }
 }
-

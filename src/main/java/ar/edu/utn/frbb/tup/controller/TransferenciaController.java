@@ -8,6 +8,7 @@ import ar.edu.utn.frbb.tup.model.CuentaTransferencias;
 import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.TransferenciaResultado;
 import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
+import ar.edu.utn.frbb.tup.model.exception.CuentaDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.NoAlcanzaException;
 import ar.edu.utn.frbb.tup.service.CuentaService;
 import ar.edu.utn.frbb.tup.service.TransferenciaService;
@@ -37,7 +38,7 @@ public class TransferenciaController {
     @PostMapping("/transfer")
     @CrossOrigin(origins = "*")
     public TransferenciaResultado transferir(@RequestBody TransferenciaDto transferenciaDto)
-            throws NoAlcanzaException, CantidadNegativaException {
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
         transferenciaValidator.validate(transferenciaDto);
 
         return transferenciaService.transferir(transferenciaDto);
@@ -46,7 +47,7 @@ public class TransferenciaController {
     @PostMapping("/receive/transfer")
     @CrossOrigin(origins = "*")
     public TransferenciaResultado recibirTransferencia(@RequestBody TransferenciaDto transferenciaDto)
-            throws NoAlcanzaException, CantidadNegativaException {
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
         transferenciaValidator.validate(transferenciaDto);
 
         return transferenciaService.recibirTransferencia(transferenciaDto);
@@ -54,8 +55,7 @@ public class TransferenciaController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/cuenta/{cuentaId}/transacciones")
-    public CuentaTransferencias obtenerTransacciones(@PathVariable long cuentaId) {
-        // TODO VALIDAR LONG CORRECTO
+    public CuentaTransferencias obtenerTransacciones(@PathVariable long cuentaId) throws CuentaDoesNotExistException {
         return cuentaService.obtenerTransaccionesDeCuenta(cuentaId);
     }
 }

@@ -19,6 +19,7 @@ import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.TransferenciaResultado;
 import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
+import ar.edu.utn.frbb.tup.model.exception.CuentaDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.NoAlcanzaException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.tipos.TipoEstadoDeTransferencia;
@@ -151,7 +152,8 @@ public class TransferenciaServiceTest {
     }
 
     @Test
-    public void testRecibirTransferenciaSuccess() throws NoAlcanzaException, CantidadNegativaException {
+    public void testRecibirTransferenciaSuccess()
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
         Cuenta cuentaA = new Cuenta();
         cuentaA.setBalance(5000).setTipoCuenta(TipoCuenta.CA$).setMoneda(TipoMoneda.DOLARES);
 
@@ -171,7 +173,8 @@ public class TransferenciaServiceTest {
     }
 
     @Test
-    public void testRecibirTransferenciaFails() throws NoAlcanzaException, CantidadNegativaException {
+    public void testRecibirTransferenciaFails()
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
 
         TransferenciaDto transferenciaDto = new TransferenciaDto();
         transferenciaDto.setCuentaOrigen(1).setCuentaDestino(2);
@@ -184,7 +187,8 @@ public class TransferenciaServiceTest {
     }
 
     @Test
-    public void testTransferirCasoMismoBancoSuccess() throws NoAlcanzaException, CantidadNegativaException {
+    public void testTransferirCasoMismoBancoSuccess()
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
         Cuenta cuentaA = new Cuenta();
         cuentaA.setBalance(5000).setTipoCuenta(TipoCuenta.CA$).setMoneda(TipoMoneda.DOLARES);
 
@@ -204,7 +208,8 @@ public class TransferenciaServiceTest {
     }
 
     @Test
-    public void testTransferirCasoMismoBancoFails() throws NoAlcanzaException, CantidadNegativaException {
+    public void testTransferirCasoMismoBancoFails()
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
 
         when(cuentaDao.find(0)).thenReturn(null);
 
@@ -217,7 +222,8 @@ public class TransferenciaServiceTest {
     }
 
     @Test
-    public void testTransferirCasoBanelcoServiceSuccess() throws NoAlcanzaException, CantidadNegativaException {
+    public void testTransferirCasoBanelcoServiceSuccess()
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
         Cuenta cuentaA = new Cuenta();
         cuentaA.setBalance(5000).setTipoCuenta(TipoCuenta.CA$).setMoneda(TipoMoneda.DOLARES);
 
@@ -236,7 +242,8 @@ public class TransferenciaServiceTest {
     }
 
     @Test
-    public void testTransferirCasoBanelcoServiceFails() throws NoAlcanzaException, CantidadNegativaException {
+    public void testTransferirCasoBanelcoServiceFails()
+            throws NoAlcanzaException, CantidadNegativaException, CuentaDoesNotExistException {
 
         Cuenta cuentaA = new Cuenta();
         cuentaA.setBalance(5000).setTipoCuenta(TipoCuenta.CA$).setMoneda(TipoMoneda.DOLARES);

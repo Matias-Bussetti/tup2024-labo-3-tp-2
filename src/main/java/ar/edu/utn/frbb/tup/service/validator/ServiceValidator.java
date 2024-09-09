@@ -8,15 +8,16 @@ import org.springframework.stereotype.Component;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.ClienteYaTieneTipoCuentaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.CuentaDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNotSupportedException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.tipos.TipoMoneda;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
-import ar.edu.utn.frbb.tup.service.ClienteService;
 
 @Component
 public class ServiceValidator {
@@ -26,15 +27,22 @@ public class ServiceValidator {
     @Autowired
     private ClienteDao clienteDao;
 
-    public void clienteExists(long dni) {
-        if (clienteDao.find(dni, false) == null) {
-            throw new IllegalArgumentException("El cliente no existe");
+    public void cuentaEsDeTipoMoneda(long numeroCuenta, TipoMoneda tipoMoneda) {
+
+        if (!tipoMoneda.equals(cuentaDao.find(numeroCuenta, false).getMoneda())) {
+            throw new IllegalArgumentException("La cuenta no es del tipo de moneda: " + tipoMoneda.getDescription());
         }
     }
 
-    public void cuentaExists(long numeroCuenta) {
+    public void clienteExists(long dni) throws ClienteDoesNotExistException {
+        if (clienteDao.find(dni, false) == null) {
+            throw new ClienteDoesNotExistException("El cliente no existe");
+        }
+    }
+
+    public void cuentaExists(long numeroCuenta) throws CuentaDoesNotExistException {
         if (cuentaDao.find(numeroCuenta, false) == null) {
-            throw new IllegalArgumentException("La cuenta no existe");
+            throw new CuentaDoesNotExistException("La cuenta no existe");
         }
     }
 

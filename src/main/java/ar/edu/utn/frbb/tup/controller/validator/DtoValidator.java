@@ -11,6 +11,17 @@ import ar.edu.utn.frbb.tup.model.tipos.TipoPersona;
 
 @Component
 public class DtoValidator {
+    public void propertyNotNull(Object object, String name) {
+        if ((object == null)) {
+            throw new IllegalArgumentException("El atributo:" + name + " no puede ser null");
+        }
+    }
+
+    public void stringNotEmpty(String string, String name) {
+        if ((string == null || string.equals(""))) {
+            throw new IllegalArgumentException("El/La " + name + " no puede ser vacio/a");
+        }
+    }
 
     public void stringIsTipoMoneda(String string) {
         if (!("DOLARES".equals(string.toUpperCase()) || "PESOS".equals(string.toUpperCase()))) {
@@ -20,7 +31,7 @@ public class DtoValidator {
 
     public void stringIsTipoCuenta(String string) {
         if (!(TipoCuenta.isValid(string))) {
-            throw new IllegalArgumentException("El formato de la cuenta no es correcta");
+            throw new IllegalArgumentException("El formato de la tipo cuenta no es correcta");
         }
     }
 

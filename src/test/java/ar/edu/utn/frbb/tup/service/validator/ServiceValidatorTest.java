@@ -16,8 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.ClienteYaTieneTipoCuentaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.CuentaDoesNotExistException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNotSupportedException;
 import ar.edu.utn.frbb.tup.model.tipos.TipoCuenta;
@@ -44,12 +46,16 @@ public class ServiceValidatorTest {
     }
 
     @Test
-    public void testClienteExistsThrowException() {
-        when(clienteDao.find(26456437, false)).thenReturn(null);
-        when(clienteDao.find(264564370, false)).thenReturn(new Cliente());
-        assertThrows(IllegalArgumentException.class, () -> serviceValidator.clienteExists(26456437));
+    public void testcuentaEsDeTipoMoneda() {
 
-        assertDoesNotThrow(() -> serviceValidator.clienteExists(264564370));
+        Cuenta cuentaA = new Cuenta();
+        cuentaA.setMoneda(TipoMoneda.PESOS);
+
+        when(cuentaDao.find(264564370, false)).thenReturn(cuentaA);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> serviceValidator.cuentaEsDeTipoMoneda(264564370, TipoMoneda.DOLARES));
+        assertDoesNotThrow(() -> serviceValidator.cuentaEsDeTipoMoneda(264564370, TipoMoneda.PESOS));
 
     }
 
@@ -57,7 +63,7 @@ public class ServiceValidatorTest {
     public void testCuentaExistsThrowException() {
         when(cuentaDao.find(26456437, false)).thenReturn(null);
         when(cuentaDao.find(264564370, false)).thenReturn(new Cuenta());
-        assertThrows(IllegalArgumentException.class, () -> serviceValidator.cuentaExists(26456437));
+        assertThrows(CuentaDoesNotExistException.class, () -> serviceValidator.cuentaExists(26456437));
 
         assertDoesNotThrow(() -> serviceValidator.cuentaExists(264564370));
 
